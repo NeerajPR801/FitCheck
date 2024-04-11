@@ -1,3 +1,4 @@
+
 import 'package:fitcheck/register.dart';
 import 'package:flutter/material.dart';
 import 'hform.dart';
@@ -16,11 +17,26 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
    
+   String user = '',pass='';
   final TextEditingController _usernameFieldController = TextEditingController();
   final  TextEditingController _passwordController = TextEditingController();
  
+ @override
+ void initState(){
+  super.initState();
+  _checkon();
+ }
+
+ Future<void> _checkon() async{
+  final prefs = await SharedPreferences.getInstance();
+  setState((){
+    user = prefs.getString('user')?? '';
+    pass = prefs.getString('pass')?? '';
+  });
+ }
+
 void  login(){
-  if(_usernameFieldController == 'admin' && _passwordController=='123'){
+  if(_usernameFieldController.text == user && _passwordController.text == pass){
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => HForm(title: 'FORM')),);
@@ -30,14 +46,14 @@ void  login(){
       context: context,
       builder:(BuildContext context){
         return AlertDialog(
-          title: Text('Error'),
-          content: Text('Wrong Username Or Password'),
+          title:  Text('Error $user'),
+          content:  Text('Wrong Username Or Password $pass'),
           actions: <Widget>[
              TextButton(
               onPressed: (){
                 Navigator.of(context).pop();
               }, 
-              child: Text('OK'),
+              child: const Text('OK'),
             )
           ]
           );
@@ -95,7 +111,7 @@ void  login(){
                 width: 300.0,
                 height: 100.0,
                child: TextField(
-                controller: _userTextFieldController1,
+                controller: _passwordController,
                 style: const TextStyle(fontWeight: FontWeight.bold),
                 obscureText: true,
                 decoration: const InputDecoration(
@@ -104,7 +120,7 @@ void  login(){
                 ),
                 onChanged: (value) {
                   setState((){
-                    _ = value;
+                    pass= value;
                   });
                 },
               ),
